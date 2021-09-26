@@ -39,13 +39,10 @@ class QueueUpsertContacts implements ShouldQueue
     public function handle()
     {
         $service = app(MailChimpService::class);
-        // call startCampaign
         if ($this->taskId !== 3) {
             $results = $service->upsertContact($this->data, $this->taskId); 
         } else {
             $results = $service->updateTags($this->data, $this->taskId);
-        }
-        //Log::debug('processed', $this->data);
- 
+        } 
     }
 }

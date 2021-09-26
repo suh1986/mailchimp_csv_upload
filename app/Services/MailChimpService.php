@@ -31,8 +31,6 @@ class MailChimpService
         $this->apiKey = Config::get('services.mailchimp.api_key');
         $this->audienceId = Config::get('services.mailchimp.audienceId');
         $this->baseUrl = Config::get('services.mailchimp.url');
-        $this->exportUrl = Config::get('services.mailchimp.export_url');
-
     }
 
     /**
@@ -47,8 +45,6 @@ class MailChimpService
 
         $mergeFields = $this->generateMergeFieldArray($data, $taskId);
 
-       // dd($data[2]);
-
         try {
             $client = new Client();
             $memberId = md5(strtolower($data[2]));
@@ -56,14 +52,13 @@ class MailChimpService
           
             $url =$this->baseUrl .$this->audienceId ."/members/". $memberId;
             $contactJson = [
-
                 "email_address" => $data[2],
                 "status"=>"subscribed",
                 "merge_fields" => $mergeFields
             ];
             $res = $client->request('PUT', $url, [
                 'json'    => $contactJson,
-                'headers' => ['authorization' => $this->apiKey]
+                'auth' => ['anystring', $this->apiKey] 
             ]);
             if ($taskId == 2) {
 
@@ -75,21 +70,17 @@ class MailChimpService
         } catch (ClientException $ex) {
             $error = (json_decode((string) $ex->getResponse()->getBody(), true));
             //Log::debug('client error', $error);
-
-
             return [
                 'success'     => false,
                 'error'       => $error,
             ];
         } catch (\Exception $ex) {
             //Log::debug('log exception', $ex);
-
             return [
                 'success' => false,
                 'error'   => $ex->getMessage(),
             ];
         }
-        
         $response = json_decode($res->getBody(), true);        
         return [
             'success' => true,
@@ -100,26 +91,41 @@ class MailChimpService
     public function addMergeField($data)
     {
 
-        $client = new Client();
-        $url =$this->baseUrl .$this->audienceId ."/merge-fields";
         foreach ($data as $row) {
-   
-            $res = $client->request('POST', $url, [
-                'json'    => $row,
-                'headers' => ['authorization' => $this->apiKey]
-            ]);
+            try {
+                $client = new Client();
+                $url =$this->baseUrl .$this->audienceId ."/merge-fields";
+            
+                $res = $client->request('POST', $url, [
+                    'json'    => $row,
+                    'auth' => ['anystring', $this->apiKey] 
+                ]);
+                $response = json_decode($res->getBody(), true);   
+            } catch (ClientException $ex) {
+                $error = (json_decode((string) $ex->getResponse()->getBody(), true));
+                return [
+                    'success'     => false,
+                    'error'       => $error,
+                ];
+            } catch (\Exception $ex) {
+                return [
+                    'success' => false,
+                    'error'   => $ex->getMessage(),
+                ];
+            }
         }
     }
 
     public function generateMergeFieldArray($data, $id)
     {
+        $merge_fields = [];
 
-       $merge_fields = [
+        $merge_fields = [
             "FNAME" => $data[0],
             "LNAME" => $data[1]
         ];
         if ($id == 2) {
-
+            //TODO: fix birthday format
             $birthday = date("m/d", strtotime($data[7]));
 
             $merge_fields['ADDRESS'] = $data[3];
@@ -128,7 +134,7 @@ class MailChimpService
             $merge_fields['BIRTHDAY'] = $birthday;
             $merge_fields['STREETADDRESS'] = $data[8];
             $merge_fields['CITY'] = $data[9];
-              $merge_fields['STATE'] = $data[10];
+            $merge_fields['STATE'] = $data[10];
             $merge_fields['ZIPCODE'] = $data[11];
             $merge_fields['COUNTRY'] = $data[12];
             $merge_fields['COUNTRYFUL'] = $data[13];
@@ -137,7 +143,6 @@ class MailChimpService
         }
         return $merge_fields;
     }
-
     public function addTags($memberId, $tagArray)
     {
   
@@ -149,32 +154,21 @@ class MailChimpService
         
             $res = $client->request('POST', $url, [
                 'json'    => $payload,
-                'headers' => ['authorization' => $this->apiKey]
+                'auth' => ['anystring', $this->apiKey] 
             ]);
-            //dd($res);
             $response = json_decode($res->getBody(), true);   
-            //dd($response);
-
         } catch (ClientException $ex) {
             $error = (json_decode((string) $ex->getResponse()->getBody(), true));
-            //Log::debug('client error', $error);
-           // dd($error);
-
-
             return [
                 'success'     => false,
                 'error'       => $error,
             ];
         } catch (\Exception $ex) {
-            //Log::debug('log exception', $ex);
-            dd($ex);
-
             return [
                 'success' => false,
                 'error'   => $ex->getMessage(),
             ];
         }
-        
         $response = json_decode($res->getBody(), true);        
         return [
             'success' => true,
@@ -195,11 +189,7 @@ class MailChimpService
         $tagArray = array_merge($removetagArray, $addtagArray);
         $memberId = md5(strtolower($data[2]));
         $this->addTags($memberId, $tagArray);
-
-    
-
     }
-
     public function generateTagArray($tags, $status)
     {
         $tagArray = [];
@@ -212,12 +202,8 @@ class MailChimpService
                 ])));
             }
         }
-
-        return $tagArray;
-
-        
+        return $tagArray;        
     }
-
     public function getTags($data)
     {
         $removeTags = [];
@@ -229,7 +215,7 @@ class MailChimpService
             $url =$this->baseUrl .$this->audienceId ."/members/". $memberId . '/tags';
         
             $res = $client->request('GET', $url, [
-                'headers' => ['authorization' => $this->apiKey]
+                'auth' => ['anystring', $this->apiKey] 
             ]);
             //dd($res);
             $response = json_decode($res->getBody(), true);
@@ -238,30 +224,21 @@ class MailChimpService
             }  
         } catch (ClientException $ex) {
             $error = (json_decode((string) $ex->getResponse()->getBody(), true));
-            //Log::debug('client error', $error);
-            //dd($error);
             return $removeTags;
         } catch (\Exception $ex) {
-          
             return $removeTags;
         }
         return $removeTags;
-        
-
     }
 
     public function export()
     {
         $responseArray = [];
-
-
         try {
             $client = new Client();
-          
             $url =$this->baseUrl .$this->audienceId ."/members";
-   
             $res = $client->request('GET', $url, [
-                'headers' => ['authorization' => $this->apiKey],
+                'auth' => ['anystring', $this->apiKey], 
                 'query' => ['count' => 500]
 
             ]);
@@ -269,25 +246,15 @@ class MailChimpService
             if (array_key_exists("members", $response) && count($response["members"]) > 0){
                 $responseArray = $response['members'];
             }
-
             return $responseArray;
-     
-
         } catch (ClientException $ex) {
             //dd('call');
             $error = (json_decode((string) $ex->getResponse()->getBody(), true));
-            //Log::debug('client error', $error);
-            dd($ex);
-
             return [
                 'success'     => false,
                 'error'       => $error,
             ];
         } catch (\Exception $ex) {
-            //Log::debug('log exception', $ex);
-                        dd($ex);
-
-
             return [
                 'success' => false,
                 'error'   => $ex->getMessage(),
@@ -300,7 +267,6 @@ class MailChimpService
             'data'    => $response
         ];
     }
-
 }
 
   

@@ -45,23 +45,8 @@ class AddMergeFields extends Command
 
         $fieldData = [
             [
-                "tag" => "ADDRESS",
-                "name" => "Address",
-                "type" => "address"
-            ],
-            [
-                "tag" => "PHONE",
-                "name" => "Phone",
-                "type" => "text"
-            ],
-            [
                 "tag" => "TITLE",
                 "name" => "Title",
-                "type" => "text"
-            ],
-            [
-                "tag" => "BIRTHDAY",
-                "name" => "Birthday",
                 "type" => "text"
             ],
             [
@@ -89,23 +74,25 @@ class AddMergeFields extends Command
                 "name" => "country",
                 "type" => "text"
             ],
-                   [
+            [
                 "tag" => "COUNTRYFULL",
                 "name" => "country full",
                 "type" => "text"
             ],
-                   [
+            [
                 "tag" => "CUSTOM1",
                 "name" => "custom field 1",
                 "type" => "text"
             ],
-                   [
+            [
                 "tag" => "CUSTOM2",
                 "name" => "custom field 2",
                 "type" => "text"
             ],
         ];
         $results = $service->addMergeField($fieldData); 
+
+        dd($results);
     }
 }
 

@@ -71,14 +71,4 @@ class ImportCSVService
         ]);
         return $data;
     }
-
-    public function exportcsv()
-    {
-
-        $service = app(MailChimpService::class);
-        $results = $service->export();
-
-        dd($results);
-
-    }
 }
