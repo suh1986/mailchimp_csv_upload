@@ -44,7 +44,7 @@ Open terminal , go to mailchimp_csv_upload , run php artisan add:merge-fields
 Run api in postman
 
 Method: POST
-URL:http://127.0.0.1:8000/api/file-import
+URL:http://127.0.0.1:8000/api/file-detail-import
 Body :
 set key : file (select type to file)
 	value: select file
@@ -52,17 +52,6 @@ set key : file (select type to file)
 
 Open terminal , go to mailchimp_csv_upload , run php artisan queue:work
 
-
-task  2:
-Run api in postman
-
-Method: POST
-URL:http://127.0.0.1:8000/api/file-detail-import
-set key : file (select type to file)
-	value: select file
-	Send request
-
-Open terminal , go to mailchimp_csv_upload , run php artisan queue:work
 
 task  3:
 Run api in postman
@@ -80,7 +69,7 @@ Open terminal , go to mailchimp_csv_upload , run php artisan export:csv-data
 After command completion you can filnd csv file 'final-contacts-csv-data-{currentdatetime}.csv'
 in project storage folder
 
-## USEFUL LINKS
+
 
 
 
