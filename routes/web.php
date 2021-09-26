@@ -17,6 +17,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('file-import-export', [App\Http\Controllers\UserController::class, 'fileImportExport']);
-Route::post('file-import', [App\Http\Controllers\UserController::class, 'fileImport'])->name('file-import');
-Route::get('file-export', [UserController::class, 'fileExport'])->name('file-export');
+Route::get('file-import-export', [App\Http\Controllers\ImportController::class, 'fileImportExport']);
+// Route::post('file-import', [App\Http\Controllers\ImportController::class, 'fileImport'])->name('file-import');
+Route::get('file-export', [ImportController::class, 'fileExport'])->name('file-export');

@@ -23,11 +23,15 @@ return [
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
-
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-
+    'mailchimp' => [
+        'api_key' => env('MAILCHIMP_API_KEY'),
+        'audienceId' => env('MAILCHIMP_AUDIENCE_ID'),
+        'url' => env('MAILCHIMP_URL'),
+        'export_url' => env('MAILCHIMP_EXPORT_URL')
+    ],
 ];

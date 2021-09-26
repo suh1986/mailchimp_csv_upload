@@ -18,4 +18,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('file-import', [App\Http\Controllers\ImportController::class, 'fileImport'])->name('file-import');
+Route::post('file-detail-import', [App\Http\Controllers\ImportController::class, 'fileDetailImport'])->name('file-detail-import');
+Route::post('update-tags', [App\Http\Controllers\ImportController::class, 'updateTags'])->name('update-tags');
+Route::get('/export-csv', [App\Http\Controllers\ImportController::class, 'exportCsv'])->name('export-csv');
+
+
+
+
+
 
